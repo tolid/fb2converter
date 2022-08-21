@@ -19,7 +19,7 @@ import (
 // FinalizeMOBI produces final mobi file out of previously saved temporary files.
 func (p *Processor) FinalizeMOBI(fname string) error {
 
-	tmp, err := p.generateIntermediateContent(fname)
+	tmp, err := p.generateKindlegenContent(fname)
 	if err != nil {
 		return fmt.Errorf("unable to generate intermediate content: %w", err)
 	}
@@ -73,7 +73,7 @@ func (p *Processor) FinalizeMOBI(fname string) error {
 // FinalizeAZW3 produces final azw3 file out of previously saved temporary files.
 func (p *Processor) FinalizeAZW3(fname string) error {
 
-	tmp, err := p.generateIntermediateContent(fname)
+	tmp, err := p.generateKindlegenContent(fname)
 	if err != nil {
 		return fmt.Errorf("unable to generate intermediate content: %w", err)
 	}
@@ -124,21 +124,14 @@ func (p *Processor) FinalizeAZW3(fname string) error {
 	return nil
 }
 
-// generateIntermediateContent produces temporary mobi file, presently by running kindlegen and returns its full path.
-func (p *Processor) generateIntermediateContent(fname string) (string, error) {
+// generateKindlegenContent produces temporary mobi file by running kindlegen and returns its full path.
+func (p *Processor) generateKindlegenContent(fname string) (string, error) {
 
 	workDir := filepath.Join(p.tmpDir, DirContent)
-	if p.kind == InEpub {
-		workDir = p.tmpDir
-	}
 	workFile := strings.TrimSuffix(filepath.Base(fname), filepath.Ext(fname)) + ".mobi"
 
 	args := make([]string, 0, 10)
-	if p.kind == InEpub {
-		args = append(args, filepath.Join(p.tmpDir, filepath.Base(p.src)))
-	} else {
-		args = append(args, filepath.Join(workDir, "content.opf"))
-	}
+	args = append(args, filepath.Join(workDir, "content.opf"))
 	args = append(args, fmt.Sprintf("-c%d", p.env.Cfg.Doc.Kindlegen.CompressionLevel))
 	args = append(args, "-locale", "en")
 	if p.env.Cfg.Doc.Kindlegen.Verbose {

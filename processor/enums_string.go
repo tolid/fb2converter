@@ -12,12 +12,13 @@ func _() {
 	_ = x[OKepub-1]
 	_ = x[OAzw3-2]
 	_ = x[OMobi-3]
-	_ = x[UnsupportedOutputFmt-4]
+	_ = x[OKfx-4]
+	_ = x[UnsupportedOutputFmt-5]
 }
 
-const _OutputFmt_name = "epubkepubazw3mobi"
+const _OutputFmt_name = "epubkepubazw3mobikfx"
 
-var _OutputFmt_index = [...]uint8{0, 4, 9, 13, 17, 17}
+var _OutputFmt_index = [...]uint8{0, 4, 9, 13, 17, 20, 20}
 
 func (i OutputFmt) String() string {
 	if i < 0 || i >= OutputFmt(len(_OutputFmt_index)-1) {

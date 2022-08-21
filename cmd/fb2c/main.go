@@ -207,7 +207,7 @@ func main() {
 			Before: wrap.beforeCommandRun,
 			After:  wrap.afterCommandRun,
 			Flags: []cli.Flag{
-				&cli.StringFlag{Name: "to", Value: "epub", Usage: "conversion output `TYPE` (supported types: epub, kepub, azw3, mobi)"},
+				&cli.StringFlag{Name: "to", Value: "epub", Usage: "conversion output `TYPE` (supported types: epub, kepub, azw3, mobi, kfx)"},
 				&cli.BoolFlag{Name: "nodirs", Usage: "when producing output do not keep input directory structure"},
 				&cli.BoolFlag{Name: "stk", Usage: "send converted file to kindle (epub only)"},
 				&cli.BoolFlag{Name: "ow", Usage: "continue even if destination exits, overwrite files"},

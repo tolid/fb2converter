@@ -95,7 +95,7 @@ func (p *Processor) generateCover() error {
 		p.env.Log.Debug("Generating cover page - done", zap.Duration("elapsed", time.Since(start)))
 	}(time.Now())
 
-	kindle := p.format == OMobi || p.format == OAzw3
+	kindle := p.format.IsKindle()
 	w, h := p.env.Cfg.Doc.Cover.Width, p.env.Cfg.Doc.Cover.Height
 
 	var cover *binImage
@@ -439,7 +439,7 @@ func (p *Processor) generateOPF() error {
 	to, f := p.ctx().createOPF("content")
 	p.Book.Files = append(p.Book.Files, f)
 
-	kindle := p.format == OMobi || p.format == OAzw3
+	kindle := p.format.IsKindle()
 
 	// Metadata generation
 

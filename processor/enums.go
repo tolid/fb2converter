@@ -13,8 +13,14 @@ const (
 	OKepub                                // kepub
 	OAzw3                                 // azw3
 	OMobi                                 // mobi
+	OKfx                                  // kfx
 	UnsupportedOutputFmt                  //
 )
+
+// IsKindle returns true if format is for kindle ecosystem.
+func (fmt OutputFmt) IsKindle() bool {
+	return fmt == OAzw3 || fmt == OMobi || fmt == OKfx
+}
 
 // ParseFmtString converts string to enum value. Case insensitive.
 func ParseFmtString(format string) OutputFmt {
