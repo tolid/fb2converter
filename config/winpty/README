@@ -1,0 +1,9 @@
+Note:
+
+	github.com/cloudfoundry/diego-ssh/winpty
+	code.cloudfoundry.org/diego-ssh/winpty
+
+Forked at commit d560480f8c1864a575297c0f7716d904b6f4059f, original code is 2 year old at this point.
+I had to fix a bug in Run() and I need plain output, no escape sequences.
+
+For sanity sake I retained original COPYRIGHT content in a separate file in this directory.

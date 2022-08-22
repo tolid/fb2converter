@@ -16,12 +16,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 if(CMAKE_CROSSCOMPILING)
     if(MSYSTEM_NAME STREQUAL "win32")
         set(KINDLEGEN "${PROJECT_SOURCE_DIR}/kindlegen/windows/kindlegen.exe")
+        list(APPEND WINPTY ${PROJECT_SOURCE_DIR}/winpty/ia32/bin/winpty-agent.exe ${PROJECT_SOURCE_DIR}/winpty/ia32/bin/winpty.dll)
         set(CROSS_GOOS windows)
         set(CROSS_GOARCH 386)
         set(INSTALL_SUBDIR "/fb2converter")
         message(STATUS "Targeting 32 bits Windows executable")
     elseif(MSYSTEM_NAME STREQUAL "win64")
         set(KINDLEGEN "${PROJECT_SOURCE_DIR}/kindlegen/windows/kindlegen.exe")
+        list(APPEND WINPTY ${PROJECT_SOURCE_DIR}/winpty/x64/bin/winpty-agent.exe ${PROJECT_SOURCE_DIR}/winpty/x64/bin/winpty.dll)
         set(CROSS_GOOS windows)
         set(CROSS_GOARCH amd64)
         set(INSTALL_SUBDIR "/fb2converter")
@@ -142,6 +144,8 @@ list(APPEND ZIP_DEPS ${PROJECT_BINARY_DIR}/changelog.txt ${FB2C_TARGET} ${KINDLE
 if(CROSS_GOOS STREQUAL "windows")
     # myhomelib suppport
     list(APPEND ZIP_DEPS ${PROJECT_BINARY_DIR}/fb2mobi/fb2mobi${CMAKE_EXECUTABLE_SUFFIX} ${PROJECT_BINARY_DIR}/fb2epub/fb2epub${CMAKE_EXECUTABLE_SUFFIX})
+    # Kindle previwer 3 suppport
+    list(APPEND WINPTY_TARGET ${PROJECT_BINARY_DIR}${INSTALL_SUBDIR}/winpty-agent.exe ${PROJECT_BINARY_DIR}${INSTALL_SUBDIR}/winpty.dll)
 endif()
 # strip path for archive content
 foreach(fname ${ZIP_DEPS})
@@ -157,14 +161,22 @@ add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/fb2c_${MSYSTEM_NAME}.zip
 
 # make sure go always runs here - it will figure out the rest
 add_custom_target(bin_fb2c ALL
-    DEPENDS ${PROJECT_SOURCE_DIR}/processor/enums_string.go ${KINDLEGEN_TARGET}
+    DEPENDS ${PROJECT_SOURCE_DIR}/processor/enums_string.go ${KINDLEGEN_TARGET} ${WINPTY_TARGET}
     BYPRODUCTS ${FB2C_TARGET}
-    COMMAND ${GO_ENV} ${GO_EXECUTABLE} build -gcflags '-N -l' ${GO_MOD_ARGS} -trimpath -o ${FB2C_TARGET}
+    COMMAND ${GO_ENV} ${GO_EXECUTABLE} build ${GO_MOD_ARGS} -trimpath -o ${FB2C_TARGET}
         fb2converter/cmd/fb2c
     COMMENT "Building fb2c..."
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
 if(CROSS_GOOS STREQUAL "windows")
+    add_custom_target(mk_install_subdir
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}${INSTALL_SUBDIR}
+        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}")
+    add_custom_command(OUTPUT ${KINDLEGEN_TARGET}
+        DEPENDS ${KINDLEGEN} mk_install_subdir
+        COMMAND ${CMAKE_COMMAND} -E copy ${KINDLEGEN} ${KINDLEGEN_TARGET}
+        COMMENT "Copying kindlegen..."
+        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}")
     # myhomelib suppport
     add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/fb2mobi/fb2mobi${CMAKE_EXECUTABLE_SUFFIX}
         COMMAND ${GO_ENV} ${GO_EXECUTABLE} build ${GO_MOD_ARGS} -trimpath -o ${PROJECT_BINARY_DIR}/fb2mobi/fb2mobi${CMAKE_EXECUTABLE_SUFFIX}
@@ -176,13 +188,19 @@ if(CROSS_GOOS STREQUAL "windows")
              fb2converter/cmd/fb2epub
         COMMENT "Building fb2epub..."
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+    # kindle previwer 3 support
+    add_custom_command(OUTPUT ${WINPTY_TARGET}
+        DEPENDS ${WINPTY} mk_install_subdir
+        COMMAND ${CMAKE_COMMAND} -E copy ${WINPTY} ${PROJECT_BINARY_DIR}${INSTALL_SUBDIR}
+        COMMENT "Copying winpty..."
+        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}")
+else()
+    add_custom_command(OUTPUT ${KINDLEGEN_TARGET}
+        DEPENDS ${KINDLEGEN}
+        COMMAND ${CMAKE_COMMAND} -E copy ${KINDLEGEN} ${KINDLEGEN_TARGET}
+        COMMENT "Copying kindlegen..."
+        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}")
 endif()
-
-add_custom_command(OUTPUT ${KINDLEGEN_TARGET}
-    DEPENDS ${KINDLEGEN}
-    COMMAND ${CMAKE_COMMAND} -E copy ${KINDLEGEN} ${KINDLEGEN_TARGET}
-    COMMENT "Copying kindlegen..."
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}")
 
 ########################################################################################################
 # Test targets: to test various parts of the system specify multiple test targets

@@ -27,20 +27,20 @@ import (
 // processBook processes single FB2 file. "src" is part of the source path (always including file name) relative to the original
 // path. When actual file was specified it will be just base file name without a path. When looking inside archive or directory
 // it will be relative path inside archive or directory (including base file name).
-func processBook(r io.Reader, enc srcEncoding, src, dst string, nodirs, stk, overwrite bool, format processor.OutputFmt, env *state.LocalEnv) error {
+func processBook(r io.Reader, enc processor.SrcEncoding, src, dst string, nodirs, stk, overwrite bool, format processor.OutputFmt, env *state.LocalEnv) error {
 
 	var fname, id string
 
 	env.Log.Info("Conversion starting", zap.String("from", src))
 	defer func(start time.Time) {
-		if r := recover(); r != nil {
-			env.Log.Error("Conversion ended with panic", zap.Any("panic", r), zap.Duration("elapsed", time.Since(start)), zap.String("to", fname), zap.ByteString("stack", debug.Stack()))
+		if rc := recover(); rc != nil {
+			env.Log.Error("Conversion ended with panic", zap.Any("panic", rc), zap.Duration("elapsed", time.Since(start)), zap.String("to", fname), zap.ByteString("stack", debug.Stack()))
 		} else {
 			env.Log.Info("Conversion completed", zap.Duration("elapsed", time.Since(start)), zap.String("to", fname), zap.String("ref_id", id))
 		}
 	}(time.Now())
 
-	p, err := processor.NewFB2(selectReader(r, enc), enc == encUnknown, src, dst, nodirs, stk, overwrite, format, env)
+	p, err := processor.NewFB2(r, enc, src, dst, nodirs, stk, overwrite, format, env)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func processDir(dir string, format processor.OutputFmt, nodirs, stk, overwrite b
 		if err != nil {
 			env.Log.Warn("Skipping path", zap.String("path", path), zap.Error(err))
 		} else if info.Mode().IsRegular() {
-			var enc srcEncoding
+			var enc processor.SrcEncoding
 			if ok, err := isArchiveFile(path); err != nil {
 				// checking format - but cannot open target file
 				env.Log.Warn("Skipping file", zap.String("file", path), zap.Error(err))
@@ -288,7 +288,7 @@ func Convert(ctx *cli.Context) (err error) {
 				break
 			}
 
-			var enc srcEncoding
+			var enc processor.SrcEncoding
 			ok, enc, err = isBookFile(head)
 			if err != nil {
 				// checking format - but cannot open target file

@@ -27,7 +27,7 @@ import (
 	"fb2converter/reporter"
 )
 
-//  Internal constants defining if program was invoked via MyHomeLib wrappers.
+// Internal constants defining if program was invoked via MyHomeLib wrappers.
 const (
 	MhlNone int = iota
 	MhlEpub
@@ -187,6 +187,10 @@ type Doc struct {
 		PageMap          string `json:"generate_apnx"`
 		ForceASIN        bool   `json:"force_asin_on_azw3"`
 	} `json:"kindlegen"`
+	//
+	KindlePreviewer struct {
+		Path string `json:"path"`
+	} `json:"kindle_previewer"`
 }
 
 // names of supported vignettes

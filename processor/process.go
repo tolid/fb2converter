@@ -33,7 +33,7 @@ import (
 // Various directories used across the program
 const (
 	DirContent    = "OEBPS"
-	DirMata       = "META-INF"
+	DirMeta       = "META-INF"
 	DirImages     = "images"
 	DirFonts      = "fonts"
 	DirVignettes  = "vignettes"
@@ -41,6 +41,8 @@ const (
 	DirHyphenator = "dictionaries"
 	DirResources  = "resources"
 	DirSentences  = "sentences"
+	DirKfx        = "kfx"
+	DirEpub       = "epub"
 )
 
 // will be used to derive UUIDs from non-parsable book ID
@@ -75,10 +77,11 @@ type Processor struct {
 	dashTransform   *config.Transformation
 	metaOverwrite   *config.MetaInfo
 	kindlegenPath   string
+	kpv             *config.KindlePreviewerEnv
 }
 
 // NewFB2 creates FB2 book processor and prepares necessary temporary directories.
-func NewFB2(r io.Reader, unknownEncoding bool, src, dst string, nodirs, stk, overwrite bool, format OutputFmt, env *state.LocalEnv) (*Processor, error) {
+func NewFB2(r io.Reader, enc SrcEncoding, src, dst string, nodirs, stk, overwrite bool, format OutputFmt, env *state.LocalEnv) (*Processor, error) {
 
 	kindle := format.IsKindle()
 
@@ -153,8 +156,16 @@ func NewFB2(r io.Reader, unknownEncoding bool, src, dst string, nodirs, stk, ove
 
 	if kindle {
 		// Fail early
-		if p.kindlegenPath, err = env.Cfg.GetKindlegenPath(); err != nil {
-			return nil, err
+		switch format {
+		case OMobi, OAzw3:
+			if p.kindlegenPath, err = env.Cfg.GetKindlegenPath(); err != nil {
+				return nil, err
+			}
+		case OKfx:
+			if p.kpv, err = env.Cfg.NewKindlePreviewerEnv(); err != nil {
+				return nil, err
+			}
+			env.Log.Debug("Found Kindle Previewer", zap.Stringer("env", p.kpv))
 		}
 	}
 
@@ -178,7 +189,7 @@ func NewFB2(r io.Reader, unknownEncoding bool, src, dst string, nodirs, stk, ove
 	}
 	env.Rpt.Store(fmt.Sprintf("fb2c-%s", u.String()), p.tmpDir)
 
-	if unknownEncoding {
+	if enc == EncUnknown {
 		// input file had no BOM mark - most likely was not Unicode
 		p.doc.ReadSettings = etree.ReadSettings{
 			CharsetReader: charset.NewReaderLabel,
@@ -186,7 +197,7 @@ func NewFB2(r io.Reader, unknownEncoding bool, src, dst string, nodirs, stk, ove
 	}
 
 	// Read and parse fb2
-	if _, err := p.doc.ReadFrom(r); err != nil {
+	if _, err := p.doc.ReadFrom(enc.SelectReader(r)); err != nil {
 		return nil, fmt.Errorf("unable to parse FB2: %w", err)
 	}
 
@@ -769,7 +780,7 @@ func (p *Processor) processBinaries() error {
 				id:      id,
 				ct:      "image/svg+xml",
 				fname:   fmt.Sprintf("bin%08d.svg", i),
-				relpath: filepath.Join(DirContent, DirImages),
+				relpath: filepath.Join(DirEpub, DirContent, DirImages),
 				imgType: "svg",
 				data:    dst,
 			})
@@ -811,7 +822,7 @@ func (p *Processor) processBinaries() error {
 			id:      id,
 			ct:      detectedCT,
 			fname:   fmt.Sprintf("bin%08d.%s", i, imgType),
-			relpath: filepath.Join(DirContent, DirImages),
+			relpath: filepath.Join(DirEpub, DirContent, DirImages),
 			img:     img,
 			imgType: imgType,
 			data:    dst,
@@ -882,7 +893,7 @@ func (p *Processor) processImages() error {
 					if p.metaOverwrite != nil && len(p.metaOverwrite.CoverImage) > 0 {
 						var (
 							err error
-							b   = &binImage{id: b.id, log: p.env.Log, relpath: filepath.Join(DirContent, DirImages)}
+							b   = &binImage{id: b.id, log: p.env.Log, relpath: filepath.Join(DirEpub, DirContent, DirImages)}
 						)
 						fname := p.metaOverwrite.CoverImage
 						if !filepath.IsAbs(fname) {

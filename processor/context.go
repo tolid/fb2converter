@@ -67,7 +67,7 @@ func (ctx *context) createXHTML(name string, attrs ...*etree.Attr) (*etree.Eleme
 	f := &dataFile{
 		id:      fname,
 		fname:   ctx.fname,
-		relpath: DirContent,
+		relpath: filepath.Join(DirEpub, DirContent),
 		ct:      "application/xhtml+xml",
 		doc:     ctx.out,
 	}
@@ -96,7 +96,7 @@ func (ctx *context) createNCX(name, id string) (*etree.Element, *dataFile) {
 	f := &dataFile{
 		id:        "ncx",
 		fname:     ctx.fname,
-		relpath:   DirContent,
+		relpath:   filepath.Join(DirEpub, DirContent),
 		transient: dataNotForSpline,
 		ct:        "application/x-dtbncx+xml",
 		doc:       ctx.out,
@@ -128,7 +128,7 @@ func (ctx *context) createPM(name string) (*etree.Element, *dataFile) {
 	f := &dataFile{
 		id:        name,
 		fname:     ctx.fname,
-		relpath:   DirContent,
+		relpath:   filepath.Join(DirEpub, DirContent),
 		transient: dataNotForSpline,
 		ct:        "application/oebps-page-map+xml",
 		doc:       ctx.out,
@@ -152,7 +152,7 @@ func (ctx *context) createOPF(name string) (*etree.Element, *dataFile) {
 	f := &dataFile{
 		id:        "content",
 		fname:     ctx.fname,
-		relpath:   DirContent,
+		relpath:   filepath.Join(DirEpub, DirContent),
 		ct:        "application/xhtml+xml",
 		transient: dataNotForSpline | dataNotForManifest,
 		doc:       ctx.out,
@@ -181,7 +181,7 @@ func (ctx *context) createOCF(name string) (*etree.Element, *dataFile) {
 	f := &dataFile{
 		id:        name,
 		fname:     ctx.fname,
-		relpath:   DirMata,
+		relpath:   filepath.Join(DirEpub, DirMeta),
 		transient: dataNotForSpline | dataNotForManifest,
 		ct:        "text/xml",
 		doc:       ctx.out,

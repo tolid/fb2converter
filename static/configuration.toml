@@ -272,6 +272,14 @@
 		#----  "app"  - apnx will be located alongside with converted file
 		generate_apnx = "none"
 
+	#---- Data from this section only used when output is requested in Amazon's format: kfx
+	[document.kindle_previewer]
+		#---- Specifies exact location of platform specific Amazon Kindle Previwer
+		#---- (to download visit "https://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765261")
+		#---- path must be absolute
+		#---- If not specified at all program will look for it in "default" installation place
+		# path = "Kindle Previewer 3"
+
 [sendtokindle]
 	#---- In case book sent successfully - delete it from disk
 	# delete_sent_book = false

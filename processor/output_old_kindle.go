@@ -127,7 +127,7 @@ func (p *Processor) FinalizeAZW3(fname string) error {
 // generateKindlegenContent produces temporary mobi file by running kindlegen and returns its full path.
 func (p *Processor) generateKindlegenContent(fname string) (string, error) {
 
-	workDir := filepath.Join(p.tmpDir, DirContent)
+	workDir := filepath.Join(p.tmpDir, DirEpub, DirContent)
 	workFile := strings.TrimSuffix(filepath.Base(fname), filepath.Ext(fname)) + ".mobi"
 
 	args := make([]string, 0, 10)

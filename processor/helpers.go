@@ -53,7 +53,7 @@ func (p *Processor) getStylesheet() (*dataFile, error) {
 		}
 	}
 	d.fname = "stylesheet.css"
-	d.relpath = DirContent
+	d.relpath = filepath.Join(DirEpub, DirContent)
 	p.Book.Data = append(p.Book.Data, d)
 	return d, nil
 }
@@ -65,7 +65,7 @@ func (p *Processor) getDefaultCover(i int) (*binImage, error) {
 		err error
 		b   = &binImage{
 			log:     p.env.Log,
-			relpath: filepath.Join(DirContent, DirImages),
+			relpath: filepath.Join(DirEpub, DirContent, DirImages),
 		}
 	)
 
@@ -108,7 +108,7 @@ func (p *Processor) getNotFoundImage(i int) (*binImage, error) {
 		err error
 		b   = &binImage{
 			log:     p.env.Log,
-			relpath: filepath.Join(DirContent, DirImages),
+			relpath: filepath.Join(DirEpub, DirContent, DirImages),
 		}
 	)
 
@@ -200,7 +200,7 @@ func (p *Processor) getVignetteFile(level, vignette string) string {
 
 	b.id = fname
 	b.fname = filepath.Base(fname)
-	b.relpath = filepath.Join(DirContent, DirVignettes)
+	b.relpath = filepath.Join(DirEpub, DirContent, DirVignettes)
 	b.ct = mime.TypeByExtension(filepath.Ext(fname))
 	p.Book.Vignettes = append(p.Book.Vignettes, b)
 

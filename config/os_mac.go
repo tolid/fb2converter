@@ -1,4 +1,4 @@
-// +build darwin
+//go:build darwin
 
 package config
 
@@ -6,11 +6,6 @@ import (
 	"os"
 	"strings"
 )
-
-// kindlegen provides OS specific part of default kindlegen location
-func kindlegen() string {
-	return "kindlegen"
-}
 
 // CleanFileName removes not allowed characters form file name.
 func CleanFileName(in string) string {
@@ -29,4 +24,19 @@ func CleanFileName(in string) string {
 // FindConverter  - used on Windows to support myhomelib
 func FindConverter(_ string) string {
 	return ""
+}
+
+// kindlegen provides OS specific part of default kindlegen location
+func kindlegen() string {
+	return "kindlegen"
+}
+
+// kpvDefault returns os specific path where kindle previewer is installed by default.
+func kpvDefault() (string, error) {
+	return "", ErrNoKindlePreviewer
+}
+
+// kpvExec executes kpv - we need this as Windows requires special handling.
+func kpvExec(exepath string, stdouter func(string), arg ...string) error {
+	return ErrNoKindlePreviewer
 }

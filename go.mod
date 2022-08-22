@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.2.0
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/bitly/go-simplejson v0.5.0
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/disintegration/imaging v1.6.2
 	github.com/fogleman/gg v1.3.0
 	github.com/fsnotify/fsnotify v1.5.4
