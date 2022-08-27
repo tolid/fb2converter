@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 
-	"fb2converter/processor/internal/mobi"
+	"fb2converter/processor/mobi"
 )
 
 // FinalizeMOBI produces final mobi file out of previously saved temporary files.

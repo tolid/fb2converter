@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+
+	"fb2converter/processor/kfx"
 )
 
 // FinalizeKFX produces final KFX file out of previously saved temporary files.
@@ -38,24 +40,7 @@ func (p *Processor) FinalizeKFX(fname string) error {
 		return fmt.Errorf("unable to create output directory: %w", err)
 	}
 
-	start := time.Now()
-	p.env.Log.Debug("Repacking - start")
-	defer func(start time.Time) {
-		p.env.Log.Debug("Repacking - done",
-			zap.Duration("elapsed", time.Since(start)),
-			zap.String("file", kpf),
-		)
-	}(start)
-
-	// tr, err := kfx.NewTransformer(kpf, outDir, p.env.Log)
-	// if err != nil {
-	// 	return fmt.Errorf("unable to parse intermediate content file: %w", err)
-	// }
-	// _ = tr
-	// if err := splitter.SaveResult(fname); err != nil {
-	// 	return fmt.Errorf("unable to save resulting MOBI: %w", err)
-	// }
-	return fmt.Errorf("FIX ME DONE: %s", fname)
+	return kfx.ConvertFromKpf(kpf, fname, outDir, p.env)
 }
 
 // generateKindlePreviewerContent produces temporary KPF file by running Kindle Previewer and returns its full path.
@@ -78,7 +63,7 @@ func (p *Processor) generateKindlePreviewerContent(outDir string) (string, error
 	}(start)
 
 	if err := p.kpv.Exec(func(s string) {
-		p.env.Log.Debug("Kindle Previewer exec", zap.String("msg", s))
+		p.env.Log.Debug("Kindle Previewer", zap.String("stdout", s))
 	}, args...); err != nil {
 		return "", err
 	}

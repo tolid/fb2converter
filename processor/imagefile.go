@@ -20,7 +20,7 @@ import (
 	"github.com/disintegration/imaging"
 	"go.uber.org/zap"
 
-	"fb2converter/processor/internal/mobi"
+	"fb2converter/processor/mobi"
 )
 
 type binImageProcessingFlags uint8
