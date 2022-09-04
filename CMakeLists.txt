@@ -107,6 +107,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     # Create git pre-commit hook to check formatting before commit
     if(EXISTS "${PROJECT_SOURCE_DIR}/.git" AND IS_DIRECTORY "${PROJECT_SOURCE_DIR}/.git")
         execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/cmake/pre-commit ${PROJECT_SOURCE_DIR}/.git/hooks/. WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+        configure_file("${PROJECT_SOURCE_DIR}/cmake/pre-push" "${PROJECT_SOURCE_DIR}/.git/hooks/pre-push" @ONLY)
     endif()
 endif()
 
