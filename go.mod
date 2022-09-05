@@ -31,6 +31,7 @@ require (
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/neurosnap/sentences.v1 v1.0.7
 	honnef.co/go/tools v0.3.3
+	modernc.org/sqlite v1.18.1
 )
 
 require (
@@ -38,7 +39,9 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
+	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/neurosnap/sentences v1.0.12 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
@@ -48,4 +51,7 @@ require (
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	modernc.org/libc v1.16.19 // indirect
+	modernc.org/mathutil v1.4.1 // indirect
+	modernc.org/memory v1.1.1 // indirect
 )
