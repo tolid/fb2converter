@@ -280,7 +280,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
     add_custom_target(deps_tidy
         SOURCES ${PROJECT_SOURCE_DIR}/go.mod
-        COMMAND ${GO_ENV} ${GO_EXECUTABLE} mod tidy -compat=${GO_MIN_REQURED_VERSION}
+        COMMAND ${GO_ENV} ${GO_EXECUTABLE} mod tidy -compat=${GO_LANG_VERSION}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         COMMENT "Cleaning dependencies (go mod tidy)"
         VERBATIM)
